@@ -1,0 +1,66 @@
+doctype html
+head
+    title Integration 
+
+body
+    section 
+        ul 
+            li home 
+            li
+                a(href="/contact") contact us 
+
+    section
+        h2= token
+
+    section
+        select#clients
+
+    section
+        ul#events 
+
+script.
+    function showEvent(event) {
+        const container = document.getElementById('events');
+
+        const item = document.createElement('li');
+        item.innerHTML = event;
+
+        container.appendChild(item);
+    }
+
+    window.api.onTokenRefresh((newToken) => {
+        showEvent('token refresh - ' + newToken);
+    });
+
+    window.api.onClientsUpdate((clients, selectedClient) => {
+        const container = document.getElementById('clients');
+
+        clients.forEach((c) => {
+            const item = document.createElement('option');
+            item.innerHTML = c;
+            item.value = c;
+
+            if (selectedClient && c === selectedClient) {
+                item.selected = true;
+            }
+
+            container.appendChild(item);
+        });
+    });
+
+    window.api.onClientSelected((selectedClient) => {
+        const container = document.getElementById('clients');
+        const options = container.children;
+
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+
+            option.selected = (option.value === selectedClient);
+        };
+
+        console.log(selectedClient);
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+        // TODO: Implement unload logic.
+    });
